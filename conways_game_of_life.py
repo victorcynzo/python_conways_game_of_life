@@ -31,7 +31,6 @@ def draw_grid(positions):
     for col in range (GRID_WIDTH):
         pygame.draw.line(screen, BLACK, (col * TILE_SIZE, 0), (col * TILE_SIZE, HEIGHT))
 
-    
 
 #main loop
 def main():
@@ -56,8 +55,6 @@ def main():
                     positions.remove(pos)
                 else:
                     positions.add(pos)
-
-
 
         screen.fill(GREY)    
         draw_grid(positions)
