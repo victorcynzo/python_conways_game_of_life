@@ -21,7 +21,7 @@ clock = pygame.time.Clock()
 def gen(num):
     return set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num)])
 
-#drawing the grid
+#drawing the grid, positions are live cells
 def draw_grid(positions):
     for position in positions:
         col, row = position
@@ -35,6 +35,33 @@ def draw_grid(positions):
     for col in range (GRID_WIDTH):
         pygame.draw.line(screen, BLACK, (col * TILE_SIZE, 0), (col * TILE_SIZE, HEIGHT))
 
+
+def adjust_grid(positions):
+    all_neighbors = set()
+    new_positions = set()
+
+    for position in positions:
+        neighbors = get_neighbors(position)
+        all_neighbors.update(neighbors) #passed into set, no dupes
+
+        #check if they're alive
+        neighbors = list(filter(lambda x: x in position, neighbors))
+
+        if len(neighbors) in [2, 3]:
+            new_positions.add(position)
+
+    #cells need to become alive
+    for position in all_neighbors:
+        neighbors = get_neighbors(positions)
+        neighbors = list(filter(lambda x: x in position, neighbors))
+
+        if len(neighbors) == 3:
+            new_positions.add(position)
+
+    return new_positions
+
+def get_neighbors(pos):
+    pass
 
 #main loop
 def main():
