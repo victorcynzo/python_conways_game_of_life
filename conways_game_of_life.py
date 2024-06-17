@@ -55,13 +55,27 @@ def adjust_grid(positions):
         neighbors = get_neighbors(positions)
         neighbors = list(filter(lambda x: x in position, neighbors))
 
-        if len(neighbors) == 3:
+        if len(neighbors) == 3: #three live neighbors cell becomes alive
             new_positions.add(position)
 
     return new_positions
 
 def get_neighbors(pos):
-    pass
+    # 8 possible neighbor saround 1 cell
+    x, y = pos
+    neighbors = []
+    for dx in [-1, 0, 1]: #displacement in x, iterate around cell
+        if x + dx < 0 or x + dx > GRID_WIDTH: #not off screen
+            continue
+        for dy in [-1, 0 ,1]: #displayement in y, iterate around cell
+            if y + dy < 0 or y + dy >GRID_HEIGHT: #not off screen
+                continue
+            if dx == 0 and dy == 0: #current pos, not iterate cell itself
+                continue
+
+            neighbors.append((x + dx, y +dy))
+
+    return neighbors
 
 #main loop
 def main():
