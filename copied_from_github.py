@@ -3,8 +3,7 @@ import random
 
 pygame.init()
 
-#constants
-BLACK = (0, 0, 0) #RGB colour codes
+BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
 YELLOW = (255, 255, 0)
 
@@ -21,20 +20,17 @@ clock = pygame.time.Clock()
 def gen(num):
     return set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num)])
 
-#drawing the grid, positions are live cells
 def draw_grid(positions):
     for position in positions:
         col, row = position
         top_left = (col * TILE_SIZE, row * TILE_SIZE)
         pygame.draw.rect(screen, YELLOW, (*top_left, TILE_SIZE, TILE_SIZE))
 
-    #all positions of alive cells, rather than every possible grid position (incl empty)
-    for row in range (GRID_HEIGHT):
-        pygame.draw.line(screen, BLACK, (0, row * TILE_SIZE), (WIDTH, row * TILE_SIZE),)
+    for row in range(GRID_HEIGHT):
+        pygame.draw.line(screen, BLACK, (0, row * TILE_SIZE), (WIDTH, row * TILE_SIZE))
 
-    for col in range (GRID_WIDTH):
+    for col in range(GRID_WIDTH):
         pygame.draw.line(screen, BLACK, (col * TILE_SIZE, 0), (col * TILE_SIZE, HEIGHT))
-
 
 def adjust_grid(positions):
     all_neighbors = set()
@@ -42,42 +38,38 @@ def adjust_grid(positions):
 
     for position in positions:
         neighbors = get_neighbors(position)
-        all_neighbors.update(neighbors) #passed into set, no dupes
+        all_neighbors.update(neighbors)
 
-        #check if they're alive
-        neighbors = list(filter(lambda x: x in position, neighbors))
+        neighbors = list(filter(lambda x: x in positions, neighbors))
 
         if len(neighbors) in [2, 3]:
             new_positions.add(position)
-
-    #cells need to become alive
+    
     for position in all_neighbors:
         neighbors = get_neighbors(position)
-        neighbors = list(filter(lambda x: x in position, neighbors))
+        neighbors = list(filter(lambda x: x in positions, neighbors))
 
-        if len(neighbors) == 3: #three live neighbors cell becomes alive
+        if len(neighbors) == 3:
             new_positions.add(position)
-
+    
     return new_positions
 
 def get_neighbors(pos):
-    # 8 possible neighbor saround 1 cell
     x, y = pos
     neighbors = []
-    for dx in [-1, 0, 1]: #displacement in x, iterate around cell
-        if x + dx < 0 or x + dx > GRID_WIDTH: #not off screen
+    for dx in [-1, 0, 1]:
+        if x + dx < 0 or x + dx > GRID_WIDTH:
             continue
-        for dy in [-1, 0 ,1]: #displayement in y, iterate around cell
-            if y + dy < 0 or y + dy >GRID_HEIGHT: #not off screen
+        for dy in [-1, 0, 1]:
+            if y + dy < 0 or y + dy > GRID_HEIGHT:
                 continue
-            if dx == 0 and dy == 0: #current pos, not iterate cell itself
+            if dx == 0 and dy == 0:
                 continue
 
             neighbors.append((x + dx, y + dy))
-
+    
     return neighbors
 
-#main loop
 def main():
     running = True
     playing = False
@@ -85,24 +77,23 @@ def main():
     update_freq = 120
 
     positions = set()
-
     while running:
         clock.tick(FPS)
 
-        if playing: #activating sim, add 1 to count, max 60/s
+        if playing:
             count += 1
-
-        if count >= update_freq: #after 120 updates, new set
+        
+        if count >= update_freq:
             count = 0
             positions = adjust_grid(positions)
 
-        pygame.display.set_caption("Playing" if playing else "Paused") #caption if playing or not
+        pygame.display.set_caption("Playing" if playing else "Paused")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
-            if event.type == pygame.MOUSEBUTTONUP:
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 col = x // TILE_SIZE
                 row = y // TILE_SIZE
@@ -112,23 +103,23 @@ def main():
                     positions.remove(pos)
                 else:
                     positions.add(pos)
-
+            
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     playing = not playing
-
+                
                 if event.key == pygame.K_c:
                     positions = set()
                     playing = False
-                    count = 0 #reset screen
+                    count = 0
                 
                 if event.key == pygame.K_g:
-                    positions = gen(random.randrange(2, 5) * GRID_WIDTH)
-
-
-        screen.fill(GREY)    
+                    positions = gen(random.randrange(4, 10) * GRID_WIDTH)
+    
+        screen.fill(GREY)
         draw_grid(positions)
         pygame.display.update()
+
 
     pygame.quit()
 
