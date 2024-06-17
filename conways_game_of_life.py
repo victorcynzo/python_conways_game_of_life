@@ -45,15 +45,15 @@ def adjust_grid(positions):
         all_neighbors.update(neighbors) #passed into set, no dupes
 
         #check if they're alive
-        neighbors = list(filter(lambda x: x in position, neighbors))
+        neighbors = list(filter(lambda x: x in positions, neighbors))
 
         if len(neighbors) in [2, 3]:
             new_positions.add(position)
 
     #cells need to become alive
     for position in all_neighbors:
-        neighbors = get_neighbors(positions)
-        neighbors = list(filter(lambda x: x in position, neighbors))
+        neighbors = get_neighbors(position) #really check spelling
+        neighbors = list(filter(lambda x: x in positions, neighbors))
 
         if len(neighbors) == 3: #three live neighbors cell becomes alive
             new_positions.add(position)
@@ -123,7 +123,7 @@ def main():
                     count = 0 #reset screen
                 
                 if event.key == pygame.K_g:
-                    positions = gen(random.randrange(2, 5) * GRID_WIDTH)
+                    positions = gen(random.randrange(4, 10) * GRID_WIDTH)
 
 
         screen.fill(GREY)    
